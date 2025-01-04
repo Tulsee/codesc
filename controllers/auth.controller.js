@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 
-export const register = async (req, res, next) => {
+export const register = async (req, res) => {
     const {name, email, password} = req.body;
     const hashedPassword = bcryptjs.hashSync(password, 12);
     const newUser = new User({name, email, password: hashedPassword})
@@ -15,7 +15,7 @@ export const register = async (req, res, next) => {
     }
 }
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     const {email, password} = req.body;
     try {
         const validUser = await User.findOne({email})
@@ -29,4 +29,17 @@ export const login = async (req, res, next) => {
     } catch (err) {
         res.status(400).json({error: err});
     }
+}
+
+export const getUser = async (req, res) => {
+    const userId = req.user.id
+
+    const user = await User.findById(userId)
+
+
+    if(!user) return res.status(404).json({"message":"user not found!!!"})
+
+        
+    const{password:pass, ...rest} = user._doc
+    res.status(200).json(rest);
 }
