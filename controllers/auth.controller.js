@@ -2,6 +2,7 @@ import User from "../models/User.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import upload from "../utils/multerConfig.js";
+import passport from "passport";
 
 
 export const register = async (req, res) => {
@@ -13,10 +14,10 @@ export const register = async (req, res) => {
         const {name, email, password} = req.body;
         const hashedPassword = bcryptjs.hashSync(password, 12);
 
-        let profileImageUrl = 'https://pxbar.com/wp-content/uploads/2023/09/girl-pic-for-instagram-profile-1.jpg'; // Default image URL
+        let profileImageUrl = 'https://pxbar.com/wp-content/uploads/2023/09/girl-pic-for-instagram-profile-1.jpg';
 
         if (req.file) {
-            profileImageUrl = `/public/uploads/${req.file.filename}`; // Save the destination URL
+            profileImageUrl = `/public/uploads/${req.file.filename}`;
         }
 
         const newUser = new User({
@@ -33,7 +34,7 @@ export const register = async (req, res) => {
             return res.status(400).json({error: err.message});
         }
     });
-}
+};
 
 export const login = async (req, res) => {
     const {email, password} = req.body;
@@ -131,3 +132,14 @@ export const deleteUser = async (req, res) => {
         return res.status(400).json({error: err.message});
     }
 };
+
+export const googleAuthentication = async (req, res) => {
+    const user = req.user;
+    const token = jwt.sign({
+        id: user._id,
+        email: user.email,
+        role: user.role
+    }, process.env.JWT_SECRET, {expiresIn: '1d'})
+    return res.status(200)
+        .json({"access_token": token});
+}
