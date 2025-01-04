@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique:true
+        unique: true
     },
     password: {
         type: String,
@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     },
     profile_image: {
         type: String,
-        default: 'https://pxbar.com/wp-content/uploads/2023/09/girl-pic-for-instagram-profile-1.jpg'
+        default: 'https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg'
     },
     role: {
         type: String,
@@ -29,5 +29,5 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-const User = mongoose.model('User',UserSchema);
+const User = mongoose.model('User', UserSchema);
 export default User;
