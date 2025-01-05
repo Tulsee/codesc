@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Post from "../models/Post.model.js";
 import User from "../models/User.model.js";
 export const getPosts = async (req, res) => {
@@ -82,5 +83,21 @@ export const deletePost = async (req, res) => {
 
     }catch(error){
         return res.status(500).json({ message: "Error deleting post", error });
+    }
+}
+
+export const getAllPostsByUserId = async(req, res)=>{
+    try{
+        const userId = req.params.userId
+
+        const posts = await Post.find({user:userId})
+
+        if(posts.length===0){
+            return res.status(404).json({message:"This user do not have any post created"})
+        }
+
+        return res.status(200).json(posts)
+    }catch(error){
+        return res.status(500).json({message:'Error while getting post', error})
     }
 }
