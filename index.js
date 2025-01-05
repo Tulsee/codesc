@@ -5,6 +5,7 @@ import passport from 'passport';
 import session from 'express-session';
 
 import AuthRoute from "./routes/auth.route.js";
+import PostRoute from "./routes/post.route.js";
 import configurePassport from './config/passport.js';
 
 dotenv.config();
@@ -34,11 +35,9 @@ app.use(passport.session());
 app.get('/', (req, res) => {
     res.send('<a href="/api/auth/google">Login with google</a>');
 });
-app.get('/success', (req, res) => {
-    res.send('<h2>Login successfully!</h2>');
-})
 
 app.use('/api/auth', AuthRoute)
+app.use('/api/post', PostRoute)
 
 app.listen(8000, () => {
     console.log('Server running on port 8000');
