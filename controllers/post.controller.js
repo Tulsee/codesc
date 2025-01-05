@@ -1,8 +1,52 @@
-import mongoose from "mongoose";
 import Post from "../models/Post.model.js";
-import User from "../models/User.model.js";
+
+
 export const getPosts = async (req, res) => {
-return res.status(200).json({message: "getPosts"});
+    try{
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit)||10;
+        const skip = (page-1)*limit;
+
+        const filter = {}
+
+        if(req.query.status){
+            filter.status = req.query.status
+        }
+
+        if(req.query.startDate && req.query.endDate) {
+            filter.createdAt ={
+                $gte: new Date(req.query.startDate),
+                $lte: new Date (req.query.endDate)
+            }
+        }
+
+        if(req.query.title){
+            filter.title = { $regex: req.query.title, $options: 'i' };
+        }
+
+        const totalPosts = await Post.countDocuments(filter);
+
+        const posts = await Post.find(filter)
+        .sort({createdAt:-1})
+        .skip(skip)
+        .limit(limit)
+
+
+        return res.status(200).json({
+            posts,
+            currentPage: page,
+            totalPages: Math.ceil(totalPosts / limit),
+            totalPosts,
+            postsPerPage: limit
+        });
+
+    }catch (error) {
+        return res.status(500).json({
+            message: "Error fetching posts",
+            error: error.message
+        });
+    }
 }
 
 export const createPost = async (req, res) => {
