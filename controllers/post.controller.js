@@ -23,3 +23,16 @@ export const createPost = async (req, res) => {
         return res.status(500).json({ message: "Error creating post", error });
     }
 }
+
+export const getPostById = async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+        return res.status(200).json({ post });
+    } catch (error) {
+        return res.status(500).json({ message: "Error fetching post", error });
+    }
+}
